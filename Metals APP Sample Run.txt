@@ -1,0 +1,35 @@
+This program takes in and displays information about various metals.
+To start, you will provide info on your first metal.
+
+Enter the metal's name: 
+>>Iron
+Enter the metal's density (in g/cm^3): 
+>>7.874
+Enter the metal's melting point at standard pressure (in degrees Celsius): 
+>>1537.8
+Enter the metal's boiling point at standard pressure (in degrees Celsius): 
+>>2860.8
+Enter the metal's hardness (1-10): 
+>>4
+Do you want to add another metal? (Y/N) 
+>>Y
+
+Enter the metal's name: 
+>>Gold
+Enter the metal's density (in g/cm^3): 
+>>19.283
+Enter the metal's melting point at standard pressure (in degrees Celsius): 
+>>1064.18
+Enter the metal's boiling point at standard pressure (in degrees Celsius): 
+>>2970
+Enter the metal's hardness (1-10): 
+>>3
+Do you want to add another metal? (Y/N) 
+>>N
+
+┌──────┬──────────────────┬──────────┬──────────┬──────────┐
+│ name │ density (g/cm^3) │ melt (F) │ boil (F) │ hardness │
+├──────┼──────────────────┼──────────┼──────────┼──────────┤
+│ Iron │ 7.874            │ 2800.04  │ 5181.44  │ 4        │
+│ Gold │ 19.283           │ 1947.52  │ 5378.0   │ 3        │
+└──────┴──────────────────┴──────────┴──────────┴──────────┘

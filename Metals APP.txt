@@ -1,0 +1,228 @@
+package my_project;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class MyClass {
+	 static Scanner userinput = new Scanner(System.in);
+		 public static void main (String[] args){  
+			System.out.println("This program takes in and displays information about various metals.");
+			System.out.println("To start, you will provide info on your first metal.");
+			 
+			//create the core list of metals
+			ArrayList<ArrayList<Object>> metalsList = new ArrayList<ArrayList<Object>>();
+			
+			//the main program loop, so they can add as many metals as they want
+			boolean userContinues = true;
+			while (userContinues) {
+				System.out.println("");
+				
+				ArrayList<Object> newInfo = getMetalInfo();
+				metalsList.add(newInfo);
+				
+				String continueInput = promptString("Do you want to add another metal? (Y/N)");
+				if (!continueInput.toLowerCase().equals("y")) {userContinues = false;}
+			}
+			
+			//column names for the table printer
+			String[] columnLabels = {"name","density (g/cm^3)","melt (F)","boil (F)","hardness"};
+			
+			//print table
+			System.out.println("");
+			displayTable(metalsList, columnLabels);
+			 
+		}
+		public static ArrayList<Object> getMetalInfo() {
+			//nested list inside the main list
+			ArrayList<Object> info = new ArrayList<Object>();
+			
+			//get information
+			String name = promptString("Enter the metal's name:");
+			double density = promptDouble("Enter the metal's density (in g/cm^3):");
+			double melt = convertToFahrenheit(promptDouble("Enter the metal's melting point at standard pressure (in degrees Celsius):"));
+			double boil = convertToFahrenheit(promptDouble("Enter the metal's boiling point at standard pressure (in degrees Celsius):"));
+			int hardness = promptInt("Enter the metal's hardness (1-10):");
+			
+			//make sure hardness is in bounds before continuing
+			while (hardness < 1 || hardness > 10) {
+				System.out.println("Error: hardness must be between 1 and 10.");
+				System.out.println("");
+				
+				hardness = promptInt("Enter the metal's hardness on the Mohs hardness scale (1-10):");
+			}
+			
+			//add to array
+			info.add(name);
+			info.add(density);
+			info.add(melt);
+			info.add(boil);
+			info.add(hardness);
+			
+			//return
+			return info;
+		}
+		//the same conversion as in the examples,
+		//just condensed and renamed
+		static double convertToFahrenheit(double temp) {
+			double answer = (9.0 / 5) * temp + 32;
+			//somewhat weird solution to get the answer consistently rounded
+			return Double.parseDouble(String.format("%.2f", answer));
+		}
+		//functions for creating the table display
+		public static void displayTable(ArrayList<ArrayList<Object>> listOfLists, String[] columns) {
+			
+			//get the width of each column using a helper function
+			int[] columnWidths = new int[columns.length];
+			for (int i = 0; i < columns.length; i++) {
+				columnWidths[i] = getColumnWidth(columns, listOfLists, i);
+			}
+			
+			//create the top line of the table
+			horizontalTableLine(columnWidths, "┌", "┐", "┬");
+			System.out.print("\n│");
+			 
+			//display the column headers
+			for (int i = 0; i < columns.length; i++) {
+				System.out.print(" " + columns[i] + " ");
+				
+				printSeparatorSpaces(columnWidths[i], 2, columns[i].length());
+				
+				System.out.print("│");
+			}
+			
+			//create the separator line between headers and data
+			System.out.print("\n");
+			horizontalTableLine(columnWidths, "├", "┤", "┼");
+			System.out.print("\n");
+			
+			//display all the metals
+			for (int i = 0; i < listOfLists.size(); i++) {
+				ArrayList<Object> currentRow = listOfLists.get(i);
+				
+				System.out.print("│");
+				
+				for (int j = 0; j < currentRow.size(); j++) {
+					Object currentItem = currentRow.get(j);
+					System.out.print(" " + currentItem.toString() + " ");
+					
+					printSeparatorSpaces(columnWidths[j], 2, currentItem.toString().length());
+					
+					System.out.print("│");
+				}
+				System.out.print("\n");
+			}
+			
+			//create the bottom line
+			horizontalTableLine(columnWidths, "└", "┘", "┴");
+		}
+		//ensures table cells are a consistent width
+		public static void printSeparatorSpaces(int columnWidth, int offset, int itemLength) {
+			int currentWidth = columnWidth - itemLength - offset;
+			
+			for (int i = 0; i < currentWidth; i++) {
+				System.out.print(" ");
+			}
+		}
+		//gets necessary width to encompass all items in a column
+		public static int getColumnWidth(String[] cols, ArrayList<ArrayList<Object>> entries, int index) {
+			int width = cols[index].length();
+			
+			for (int i = 0; i < entries.size(); i++) {
+				int entryLength = entries.get(i).get(index).toString().length();
+				if (entryLength > width) {width = entryLength;}
+			}
+			
+			return width + 2; //adds 2 for an extra space on each side
+		}
+		//display a horizontal line with customizable intersections and edges
+		public static void horizontalTableLine(int[] widths, String lEdge, String rEdge, String inter) {
+			 System.out.print(lEdge);
+			 
+			 //separated from the other loop so the intersection can be different
+			 for (int j = 0; j < widths[0]; j++) {
+				 System.out.print("─");
+			 }
+			 
+			 for (int i = 1; i < widths.length; i++) {
+				 System.out.print(inter);
+				 for (int j = 0; j < widths[i]; j++) {
+					 System.out.print("─");
+				 }
+			 }
+			 
+			 System.out.print(rEdge);
+		}
+	    //helper functions since my user input format is so consistent
+	    public static String promptString(String message) {
+	    	System.out.format("%s \n>>", message);
+	    	return userinput.nextLine();
+	    }
+	    public static int promptInt(String message) {
+	    	int input = 0;
+	    	String errorMsg = "Error: That is not an integer. Please enter a valid number with no decimal component.";
+
+	    	try {
+		    	System.out.format("%s \n>>", message);
+		    	input = userinput.nextInt();
+		    	
+		    	userinput.nextLine();
+		    	return input;
+	    	} catch (Exception e) {
+		    	System.out.println(errorMsg);
+		    	System.out.println("");
+		    	
+		    	userinput.nextLine();
+		    	
+	    	}
+	    	
+	    	while (true) {
+	    		try {
+			    	System.out.format("%s \n>>", message);
+			    	input = userinput.nextInt();
+			    	
+			    	userinput.nextLine();
+			    	return input;
+	    		} catch (Exception e2) { 
+			    	System.out.println(errorMsg);
+			    	System.out.println("");
+			    	
+			    	userinput.nextLine();
+			    	continue;
+	    		}
+	    	}
+
+	    }
+	    public static double promptDouble(String message) {
+	    	double input = 0;
+	    	String errorMsg = "Error: That is not a number. Please enter a valid number with or without decimal component.";
+
+	    	try {
+		    	System.out.format("%s \n>>", message);
+		    	input = userinput.nextDouble();
+		    	
+		    	userinput.nextLine();
+		    	return input;
+	    	} catch (Exception e) {
+		    	System.out.println(errorMsg);
+		    	System.out.println("");
+		    	
+		    	userinput.nextLine();
+	    	}
+	    	
+	    	while (true) {
+	    		try {
+			    	System.out.format("%s \n>>", message);
+			    	input = userinput.nextDouble();
+			    	
+			    	userinput.nextLine();
+			    	return input;
+	    		} catch (Exception e2) { 
+			    	System.out.println(errorMsg);
+			    	System.out.println("");
+			    	
+			    	userinput.nextLine();
+			    	continue;
+	    		}
+	    	}
+
+	    }
+  }
